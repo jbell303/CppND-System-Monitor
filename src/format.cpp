@@ -19,8 +19,15 @@ string Format::ElapsedTime(long time) {
   time %= 60; // remainder will be SS
   sec = time;
 
-  // use string stream to format HH:MM:SS
-  std::ostringstream stringStream;
-  stringStream << hour << ":" << min << ":" << sec;
-  return stringStream.str();
+  return LeadingZero(hour) + ":" + LeadingZero(min) + 
+    ":" + LeadingZero(sec);
+ }
+
+ // insert leading zero if value less than 10
+ // else return the value in string format
+ string Format::LeadingZero (int t) {
+   if (t < 10) {
+   return "0" + std::to_string(t);
+  }
+  return std::to_string(t);
  }

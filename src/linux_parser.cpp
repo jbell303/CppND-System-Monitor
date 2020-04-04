@@ -126,7 +126,7 @@ long LinuxParser::ActiveJiffies(int pid) {
     linestream >> utime >> stime >> cutime >> cstime;
     // return the sum of process jiffies
     return atol(utime.c_str()) + atol(stime.c_str()) +
-            atol(cutime.c_str()) + atol(cstime.c_str());
+      atol(cutime.c_str()) + atol(cstime.c_str());
   }
   return 0; 
 }

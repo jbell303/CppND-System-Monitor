@@ -3,7 +3,8 @@
 
 Processor::Processor() : totalJiffies_(0), idleJiffies_(0) {}
 
-// TODO: Return the aggregate CPU utilization
+// DONE: Return the aggregate CPU utilization
+// cpu utilization = delta active jiffies / delta total jiffies
 float Processor::Utilization() { 
     long total =  LinuxParser::Jiffies();
     long idle = LinuxParser::IdleJiffies();
