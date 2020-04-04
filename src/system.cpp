@@ -17,6 +17,7 @@ using std::vector;
 // DONE: Return the system's CPU
 Processor& System::Cpu() { return cpu_; }
 
+// Compare two processes based on the operator overload in process.cpp
 bool System::Compare(Process& a, Process& b) {
     bool result = b < a;
     return result;
