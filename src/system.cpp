@@ -17,8 +17,21 @@ using std::vector;
 // TODO: Return the system's CPU
 Processor& System::Cpu() { return cpu_; }
 
+bool System::Compare(Process& a, Process& b) {
+    bool result = b < a;
+    return result;
+}
+
 // TODO: Return a container composed of the system's processes
-vector<Process>& System::Processes() { return processes_; }
+vector<Process>& System::Processes() { 
+    vector<int> pids = LinuxParser::Pids(); //comment out for testing
+    for (int pid : pids) {
+        processes_.push_back(Process(pid));
+    }
+    std::sort(processes_.begin(), processes_.end(), Compare);
+    // processes_.push_back(Process(1021));
+    return processes_;
+}
 
 // TODO: Return the system's kernel identifier (string)
 std::string System::Kernel() { 
