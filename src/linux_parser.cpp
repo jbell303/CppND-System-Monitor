@@ -87,7 +87,7 @@ float LinuxParser::MemoryUtilization() {
   return (memTotal - memFree) / memTotal; 
 }
 
-// TODO: Read and return the system uptime
+// DONE: Read and return the system uptime
 long LinuxParser::UpTime() { 
   string line, timestr;
   std::ifstream stream(kProcDirectory + kUptimeFilename);
@@ -100,7 +100,7 @@ long LinuxParser::UpTime() {
   return 0;
 }
 
-// TODO: Read and return the number of jiffies for the system
+// DONE: Read and return the number of jiffies for the system
 long LinuxParser::Jiffies() { 
   vector<string> cpuUtil = LinuxParser::CpuUtilization();
   long sum = 0;
@@ -111,8 +111,7 @@ long LinuxParser::Jiffies() {
   return sum; 
 }
 
-// TODO: Read and return the number of active jiffies for a PID
-// REMOVE: [[maybe_unused]] once you define the function
+// DONE: Read and return the number of active jiffies for a PID
 long LinuxParser::ActiveJiffies(int pid) { 
   string line, utime, stime, cutime, cstime;
   std::ifstream stream(kProcDirectory + to_string(pid) + kStatFilename);
@@ -131,36 +130,40 @@ long LinuxParser::ActiveJiffies(int pid) {
   return 0; 
 }
 
-// TODO: Read and return the number of active jiffies for the system
+// DONE: Read and return the number of active jiffies for the system
 long LinuxParser::ActiveJiffies() { 
-  /**
-  *  /proc/stat   
-  *  cpu user nice system idle iowait irq soft_irq steal guest guest_nice
-  */ 
-  // sum of user, active and system, irq, softirq, steal
+  // get a vector of cpu usage in string format
   vector<string> cpuUtil = LinuxParser::CpuUtilization();
+  
+  // convert strings to long and store in separate vector
   vector<long> usage = {};
   for (string jiffy : cpuUtil) {
     long value = atol(jiffy.c_str());
     usage.push_back(value);
   }
-  return usage[0] + usage[1] + usage[2] + usage[5] + usage[6];
+  // sum of all active processes
+  return usage[kUser_] + usage[kNice_] + usage[kSystem_] + usage[kIRQ_] + usage[kSoftIRQ_] +
+    usage[kSteal_] + usage[kGuest_] + usage[kGuestNice_];
 }
 
-// TODO: Read and return the number of idle jiffies for the system
+// DONE: Read and return the number of idle jiffies for the system
 long LinuxParser::IdleJiffies() { 
-  // sum of idle, iowait
+  // get a vector of cpu usage in string format
   vector<string> cpuUtil = LinuxParser::CpuUtilization();
+  
+  // convert strings to long and store in separate vector
   vector<long> usage = {};
   for (string jiffy : cpuUtil) {
     long value = atol(jiffy.c_str());
     usage.push_back(value);
   }
-  return usage[3] + usage[4];
+  // sum of all idle processes
+  return usage[kIdle_] + usage[kIOwait_];
 }
 
-// TODO: Read and return CPU utilization
+// DONE: Read and return CPU utilization
 vector<string> LinuxParser::CpuUtilization() { 
+  // create a vector of strings representing CPU usage
   vector<string> cpuUtil;
   string cpu, line;
   std::ifstream stream(kProcDirectory + kStatFilename);
@@ -176,7 +179,7 @@ vector<string> LinuxParser::CpuUtilization() {
   return {};
 }
 
-// TODO: Read and return the total number of processes
+// DONE: Read and return the total number of processes
 int LinuxParser::TotalProcesses() { 
   string line, key, value;
   std::ifstream stream(kProcDirectory + kStatFilename);
@@ -286,7 +289,9 @@ long LinuxParser::UpTime(int pid) {
     for (int i = 0; i < 22; i++) { // (22) stime
       linestream >> buffer;
     }
-    long stime = atol(buffer.c_str()) / sysconf(_SC_CLK_TCK);
+    // divide ticks by cpu speed
+    long stime = atol(buffer.c_str()) / sysconf(_SC_CLK_TCK); 
+
     // process uptime = system uptime - process start time 
     return LinuxParser::UpTime() - stime;
   }

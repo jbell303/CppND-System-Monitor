@@ -20,7 +20,7 @@ int Process::Pid() { return pid_; }
 // CPU Utilization = delta process jiffies / delta system jiffies
 float Process::CpuUtilization() { 
     long active_jiffies = LinuxParser::ActiveJiffies(pid_);
-    long system_jiffies = LinuxParser::Jiffies() - LinuxParser::IdleJiffies();
+    long system_jiffies = LinuxParser::ActiveJiffies();
 
     long delta_a = active_jiffies - active_jiffies_;
     long delta_s = system_jiffies - system_jiffies_;
@@ -51,8 +51,7 @@ long int Process::UpTime() {
 }
 
 // DONE: Overload the "less than" comparison operator for Process objects
-// compare cpu utilization for two process objects
 bool Process::operator<(Process const& a) const { 
-    
+    // compare cpu utilization for two process objects
     return this->cpuUtil_ < a.cpuUtil_;
 }
